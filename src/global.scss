@@ -15,7 +15,9 @@ html {
 
   background-color: var(--bg);
   color: var(--fg);
-  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  font-family: 'Architects Daughter', cursive;
+  font-family: 'Orbitron', sans-serif;
+  // font-family: 'Architects Daughter', cursive;//-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   font-size: calc(.65em + 0.7vw);
   line-height: 1.3;
 
@@ -126,16 +128,26 @@ button {
   border-radius: 20px;
   cursor: pointer;
   color: #fff;
-  background: rgb(59, 58, 58);
+  background: rgb(66, 65, 65);
   flex: 1;
   // text-align: center;
   position: relative;
   transition: all 500ms ease-in-out;
+  position: relative;
+  transition: top 50ms;
+  &:hover, &:focus {
+    top: -1px;
+  }
+  &:active {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    top: 1px;
+  }
 }
 
 header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .signout {
@@ -143,9 +155,9 @@ header {
 }
 
 .signin {
-  margin-top: 20px;
+  margin-top: 10px;
   height: 60px;
-  color: green;
+  // color: green;
 }
 
 .sender {
@@ -207,10 +219,107 @@ aside footer *:last-child {
 
 .account {
   padding: 15px;
+  padding-right: 20px;
 }
 
-.message-area {
+.logo {
+  flex: 1;
+}
+
+.charts {
   display: flex;
   justify-content: space-between;
-  //align-items: center;
+}
+.stats {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modalContainer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba($color: #000000, $alpha: 0.35);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .modal {
+    width: 30vw;
+    height: auto;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 20px;
+
+    background-color: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+
+    &_header {
+      position: relative;
+      border-bottom: 1px solid #dddddd;
+      &-title {
+        text-align: center;
+      }
+
+      .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: transparent;
+
+        img {
+          width: 1rem;
+          height: auto;
+          transition: all 0.3s;
+        }
+        &:hover {
+          img {
+            transform: scale(1.1);
+          }
+        }
+      }
+    }
+
+    &_content {
+      border-bottom: 1px solid #dddddd;
+      padding: 2rem 0;
+    }
+
+    &_footer {
+      padding: 2rem 0;
+      padding-bottom: 0;
+
+      button {
+        float: right;
+        padding: 0.5rem;
+
+        border-radius: 8px;
+      }
+      .modal-close {
+        background-color: transparent;
+        font-weight: 600;
+
+        &:hover {
+          color: rgba(54, 67, 72, 0.8);
+        }
+      }
+      .submit {
+        margin-right: 1rem;
+        background-color: #364348;
+        color: #fff;
+
+        &:hover {
+          background-color: rgba(54, 67, 72, 0.8);
+        }
+      }
+    }
+  }
+}
+
+.leader {
+  color: rgba(75,192,192,1);
 }

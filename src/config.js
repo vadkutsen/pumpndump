@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME ||'challenge-8'
+const CONTRACT_NAME = process.env.CONTRACT_NAME ||'dev-1637956063244-33394579945685'
 
 function getConfig(env) {
   switch (env) {

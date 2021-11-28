@@ -1,5 +1,5 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::{LookupMap, Vector};
+use near_sdk::collections::{UnorderedMap};
 use near_sdk::{env, near_bindgen, setup_alloc};
 
 setup_alloc!();
@@ -7,9 +7,9 @@ setup_alloc!();
 impl Default for NearvemberCreativityWinners {
     fn default() -> Self {
         Self {
-            question: "Select a most creative NEARvember".to_string(),
-            candidates: Vector::new(b"c".to_vec()),
-            voted: LookupMap::new(b"v".to_vec()),
+            question: "Select a most creative NEARvemberer".to_string(),
+            candidates: UnorderedMap::new(b"c"),
+            voted: UnorderedMap::new(b"v"),
         }
     }
 }
@@ -18,8 +18,8 @@ impl Default for NearvemberCreativityWinners {
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct NearvemberCreativityWinners {
     question: String,
-    candidates: Vector<(String, u32)>,
-    voted: LookupMap<String, String>,
+    candidates: UnorderedMap<String, u32>,
+    voted: UnorderedMap<String, String>,
 }
 
 #[near_bindgen]
@@ -28,36 +28,35 @@ impl NearvemberCreativityWinners {
         self.question.clone()
     }
 
-    pub fn add_candidate(&mut self, candidate: String) {
-        let cand_list: Vec<String> = self.candidates.iter().map(|(x, _y)| x.clone()).collect();
-        assert!(!cand_list.contains(&candidate), "Candidate already exists");
+    pub fn add_candidate(&mut self, candidate: String) -> String {
+        if !self.candidates.get(&candidate).is_none() {
+            return format!("Candidate {} already exists", candidate);
+        }
         // Use env::log to record logs permanently to the blockchain!
         env::log(format!("Saving candidate '{}' to candidates", &candidate).as_bytes());
-        self.candidates.push(&(candidate, 0));
+        self.candidates.insert(&candidate, &0);
+        return format!("{} added to candidates", &candidate);
     }
 
-    pub fn vote(&mut self, candidate: String) -> bool {
+    pub fn vote(&mut self, candidate: String) -> String {
         let voter_id = env::predecessor_account_id();
-        if self.voted.contains_key(&voter_id) {
+        if self.candidates.get(&candidate).is_none(){
+            return format!("Candidate {} not found", &candidate);
+        }
+        if !self.voted.get(&voter_id).is_none() {
             env::log(format!("{} already voted", &voter_id).as_bytes());
-            return false;
+            return format!("Account {} already voted", &voter_id);
         }
         env::log(format!("{} is voting", &voter_id).as_bytes());
-        self.voted.insert(&voter_id, &String::from(&candidate));
-
-        for i in 0..self.candidates.len() {
-            let mut cand = self.candidates.get(i).unwrap();
-            if &cand.0 == &candidate {
-                cand.1 += 1;
-                self.candidates.replace(i, &cand);
-            }
-        }
-        return true;
+        let mut val = self.candidates.get(&candidate).unwrap();
+        val += 1;
+        self.candidates.insert(&candidate, &val);
+        self.voted.insert(&voter_id, &candidate);
+        return format!("Your vote for {} accepted", &candidate);
     }
 
-    pub fn get_vote(&self) -> String {
-        let voter_id = env::signer_account_id();
-        self.voted.get(&voter_id).unwrap_or(String::from("You did not vote yet"))
+    pub fn get_vote(&self, account_id: String ) -> String {
+        self.voted.get(&account_id).unwrap_or(String::from("It's time to vote!"))
     }
 
     pub fn get_candidates(&self) -> Vec<(u32, String, u32)> {
@@ -72,17 +71,19 @@ impl NearvemberCreativityWinners {
         if self.candidates.len() == 0 {
             return ("No winner selected yet".to_string(), 0);
         }
-        let mut winner = self.candidates.get(0).unwrap();
-        let mut max_score = winner.1;
+        let keys = self.candidates.keys_as_vector();
+        let values = self.candidates.values_as_vector();
+        let mut max_score = 0;
+        let mut winner = String::from("");
         for i in 0..self.candidates.len() {
-            let candidate = self.candidates.get(i).unwrap();
-            let score = candidate.1;
-            if score > max_score {
-                winner = candidate;
-                max_score = score;
+            let key = keys.get(i).unwrap();
+            let value = values.get(i).unwrap();
+            if value > max_score {
+                winner = key;
+                max_score = value;
             }
         }
-        winner
+        return (winner, max_score);
     }
 }
 
@@ -120,7 +121,7 @@ mod tests {
         testing_env!(context);
         let contract = NearvemberCreativityWinners::default();
         let question = contract.get_question();
-        assert_eq!("Select a most creative NEARvember", question.to_string());
+        assert_eq!("Select a most creative NEARvemberer", question.to_string());
     }
 
     #[test]
@@ -128,9 +129,14 @@ mod tests {
         let context = get_context(vec![], false);
         testing_env!(context);
         let mut contract = NearvemberCreativityWinners::default();
-        contract.add_candidate("Cat".to_string());
+        let response = contract.add_candidate("Cat".to_string());
+        assert_eq!("Cat added to candidates".to_string(), response);
         let candidates = contract.get_candidates();
-        assert_eq!(true, candidates.len() == 1);
+        assert_eq!(1, candidates.len());
+        let response2 = contract.add_candidate("Cat".to_string());
+        assert_eq!("Candidate Cat already exists".to_string(), response2);
+        let candidates = contract.get_candidates();
+        assert_eq!(1, candidates.len());
     }
 
     #[test]
@@ -138,23 +144,13 @@ mod tests {
         let context = get_context(vec![], false);
         testing_env!(context);
         let mut contract = NearvemberCreativityWinners::default();
-        contract.add_candidate("Cat".to_string());
-        let vote = contract.vote("Cat".to_string());
-        assert_eq!(true, vote);
+        contract.add_candidate("Dog".to_string());
+        let vote = contract.vote("Dog".to_string());
+        assert_eq!("Your vote for Dog accepted".to_string(), vote);
+        let vote = contract.vote("Dog".to_string());
+        assert_eq!("Account carol_near already voted".to_string(), vote);
     }
 
-    #[test]
-    fn voted() {
-        let context = get_context(vec![], false);
-        testing_env!(context);
-        let mut contract = NearvemberCreativityWinners::default();
-        contract.add_candidate("Cat".to_string());
-        contract.add_candidate("Dog".to_string());
-        let vote1 = contract.vote("Cat".to_string());
-        assert_eq!(true, vote1);
-        let vote2 = contract.vote("Dog".to_string());
-        assert_eq!(false, vote2);
-    }
 
     #[test]
     fn get_winner() {
@@ -164,8 +160,7 @@ mod tests {
         let before = contract.get_winner();
         assert_eq!("No winner selected yet".to_string(), before.0.to_string());
         contract.add_candidate("Dog".to_string());
-        let vote = contract.vote("Dog".to_string());
-        assert_eq!(true, vote);
+        contract.vote("Dog".to_string());
         let after = contract.get_winner();
         assert_eq!("Dog".to_string(), after.0.to_string());
         assert_eq!("1".to_string(), after.1.to_string());
@@ -176,12 +171,11 @@ mod tests {
         let context = get_context(vec![], false);
         testing_env!(context);
         let mut contract = NearvemberCreativityWinners::default();
-        let before = contract.get_vote();
-        assert_eq!("You did not vote yet".to_string(), before.to_string());
+        let before = contract.get_vote("carol_near".to_string());
+        assert_eq!("It's time to vote!".to_string(), before.to_string());
         contract.add_candidate("Dog".to_string());
-        let vote = contract.vote("Dog".to_string());
-        assert_eq!(true, vote);
-        let after = contract.get_vote();
+        contract.vote("Dog".to_string());
+        let after = contract.get_vote("carol_near".to_string());
         assert_eq!("Dog".to_string(), after.to_string());
     }
 

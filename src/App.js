@@ -1,109 +1,149 @@
 import 'regenerator-runtime/runtime';
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Big from 'big.js';
-import TransferForm from './components/TransferForm';
-import MintForm from './components/MintForm';
-import RegisterReceiverForm from './components/RegisterReceiverForm';
+import AddCandidateForm from './components/AddCandidateForm';
+import Candidates from './components/Candidates';
+import CandidateCard from './components/CandidateCard';
+import Chart from './components/Chart';
+import Bars from './components/Bars';
+import Loader from './components/Loader';
 import SignIn from './components/SignIn';
 import Notification from './components/Notification';
-import spaceman from './assets/beard-white.svg';
-import beardLogo from './assets/beard-white.svg';
 
 const BOATLOAD_OF_GAS = Big(3).times(10 ** 13).toFixed();
 
 const App = ({ contract, currentUser, nearConfig, wallet }) => {
-  const [balance, setBalance] = useState(0)
+  const [question, setQuestion] = useState()
+  const [candidates, setCandidates] = useState([])
+  const [votes, setVotes] = useState(0)
+  const [voted, setVoted] = useState()
+  const [winner, setWinner] = useState([])
+  const [candidate, setCandidate] = useState()
+  const [num, setNum] = useState(59)
   const [showNotification, setShowNotification] = useState(false)
+  const [showLoader, setShowLoader] = useState(false)
+  const [modal, setModal] = useState(false)
+
+  const { networkId } = nearConfig
+
+  let intervalRef = useRef();
+  const decreaseNum = () => setNum((prev) => prev - 1);
 
   useEffect(() => {
-    getBalance()
-  }, [])
+    getQuestion()
+    getVote()
+    getCandidates()
+    getWinner()
+    setVotes(calculateVotes(candidates))
+    intervalRef.current = setInterval(decreaseNum, 1000);
+    return () => clearInterval(intervalRef.current);
+  }, [voted])
 
-  const getBalance = () => {
-    currentUser ? contract.ft_balance_of({account_id: currentUser.accountId }).then(balance => {setBalance(balance*1000000000000000000000000)}) : 0
+  const getQuestion = () => {
+    contract.get_question().then(question => {setQuestion(question)})
   }
 
-  const register = () => {
-    contract.storage_deposit(
-      {
-        account_id: currentUser.accountId,
-      },
-      BOATLOAD_OF_GAS,
-      Big(0.00125)
-        .times(10 ** 24)
-        .toFixed()
-    )
+  const getVote = () => {
+    if (currentUser) {
+      contract.get_vote({
+        account_id: currentUser.accountId
+      }).then(voted =>
+        voted === 'It\'s time to vote!' ? setVoted(false) : setVoted(true),
+      )
+    } else {
+      setVoted(true)
+    }
   }
 
-  const registerReceiver = (e) => {
+  const addCandidate = (e) => {
     e.preventDefault();
-    const { receiver } = e.target.elements;
-    contract.storage_deposit(
-      {
-        account_id: receiver.value,
-      },
-      BOATLOAD_OF_GAS,
-      Big(0.00125)
-        .times(10 ** 24)
-        .toFixed()
-    ).then(() => {
-      getBalance()
-    })
-  }
-
-  const onMintSubmit = (e) => {
-    e.preventDefault();
-    const { fieldset, amount } = e.target.elements;
-    contract.ft_mint(
-      {
-        receiver_id: currentUser.accountId,
-        amount: amount.value,
-      },
-      BOATLOAD_OF_GAS,
-      Big(0.01).times(10 ** 24).toFixed()
-    ).then(() => {
-      getBalance()
-      amount.value = 0;
-      fieldset.disabled = false;
-      accountId.focus();
-      // show Notification
-      setShowNotification(true)
-      setTimeout(() => {
-        setShowNotification(false)
-      }, 11000)
-    })
-  }
-
-  const onTransferSubmit = (e) => {
-    e.preventDefault();
-    const { fieldset, receiverId, amount } = e.target.elements;
+    const { fieldset, candidate } = e.target.elements;
     fieldset.disabled = true;
-    contract.ft_transfer(
+    setShowLoader(true)
+    contract.add_candidate(
       {
-        receiver_id: receiverId.value,
-        amount: amount.value
+        candidate: candidate.value,
       },
       BOATLOAD_OF_GAS,
-      Big(0.000000000000000000000001).times(10 ** 24).toFixed()
-    ).then(() => {
-      getBalance()
-      accountId.value = '';
-      amount.value = 0;
-      fieldset.disabled = false;
-      accountId.focus();
-      // show Notification
+    ).then((response) => {
+      setShowLoader(false)
+      candidate.value = ''
+      fieldset.disabled = false
+      getCandidates()
       setShowNotification(true)
       setTimeout(() => {
         setShowNotification(false)
       }, 11000)
+    }).catch((e) => {
+      alert(
+        'Something went wrong! ' +
+        'Maybe you need to sign out and back in? ' +
+        'Check your browser console for more info.'
+      )
     })
+  }
+
+  const getCandidates = () => {
+    contract.get_candidates().then(candidates => {
+      setCandidates(candidates)
+      setVotes(calculateVotes(candidates))
+    })
+  }
+
+  const getCandidate = (candidate) => {
+      setCandidate(candidate)
+      toggleModal()
+  }
+
+  const calculateVotes = (candidates) => {
+    const voted = candidates.map(candidate => {
+      return parseInt(candidate[2])
+    })
+      const sum = voted.reduce((partial_sum, a) => partial_sum + a, 0)
+      return sum
+  }
+
+  const vote = () => {
+    setShowLoader(true)
+    contract.vote(
+      {
+        candidate: candidate
+      },
+      BOATLOAD_OF_GAS,
+    ).then(() => {
+      setShowLoader(false)
+      setVoted(true)
+      toggleModal()
+      setCandidate()
+      getCandidates()
+      setShowNotification(true)
+      setTimeout(() => {
+        setShowNotification(false)
+      }, 11000)
+    }).catch((e) => {
+      alert(
+        'Something went wrong! ' +
+        'Maybe you need to sign out and back in? ' +
+        'Check your browser console for more info.'
+      )
+    })
+  }
+
+  const getWinner = () => {
+    contract.get_winner().then(winner => {
+      setWinner(winner)
+    })
+  }
+
+  const toggleModal = () => {
+    setModal(!modal)
   }
 
   const signIn = () => {
     wallet.requestSignIn(
       nearConfig.contractName,
-      'NEARvember challenge 6'
+      'Near voting'
     )
   }
 
@@ -115,62 +155,75 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
   return (
     <main>
       {currentUser ?
-      <div>
-        <header>
-          <div className="account">
-            <div>Hi <span>{currentUser.accountId}!</span> Your balance: <span>{(balance/1000000000000000000000000).toFixed(4)} BRD,</span> <span>{(currentUser.balance/1000000000000000000000000).toFixed(4)} NEAR</span></div>
-          </div>
-          <button className="signout" onClick={signOut}>Log out</button>
-        </header>
         <div>
-          <h1 style={{ textAlign: 'center' }}>NEARvember Challenge #6</h1>
-          <div className="image-container">
-              <img src={spaceman} style={{ width: '20%' }} alt="Spaceman" />
+          <header>
+            <h3 className="logo">Near Voting</h3>
+            <div className="account">
+              <div>Hi <span>{currentUser.accountId}!</span> Balance: <span>{(currentUser.balance/1000000000000000000000000).toFixed(4)} NEAR</span></div>
             </div>
-          <h3>BEARD token <img src={beardLogo} style={{width: '32px', color: 'white'}} /> is now avilable for minting and transfering!</h3>
-        </div>
-      </div>
-      :
-      <header><button className="signin" onClick={signIn}>Log in</button></header>
-      }
-      { currentUser
-        ? <div>
+            <button className="signout" onClick={signOut}>Log out</button>
+          </header>
+          <h1 style={{ textAlign: 'center' }}>{question}</h1>
+          {voted ?
             <div>
-              <p>Just a few easy steps to get BRD:</p>
-              <p>
-                1. Register first if you did not use BRD before{' '}
-                <button className="register" onClick={register}>Register</button>
-              </p>
-              <p>
-                2. Register the receiver to ensure they can recieve transferred tokens
-              </p>
-              <RegisterReceiverForm onSubmit={registerReceiver} />
-                <p>3. Mint and anjoy or Transfer to your friends</p>
+              <div>
+                <div className="stats">
+                <div>
+                  Time remaining: {num > 0 ? <span><strong>00:00:{num}</strong></span> : <span>Time's up! I'm kidding :)</span>}</div>
+                  <div> Candidates: <strong>{candidates.length}</strong></div>
+                  <div> Votes: <strong>{votes}</strong></div>
+                  <div> Leader: <strong className="leader">{winner[0]}</strong>,{' '}<strong> {winner[1]} votes</strong></div>
+                </div>
+              </div>
+              <div className="charts">
+                <div style={{ flex: 1, paddingRight: '20px' }}>
+                <h5>Leaderboard</h5>
+                <Candidates candidates={candidates} getCandidate={getCandidate} />
+                <CandidateCard show={modal} candidate={candidate} vote={vote} close={toggleModal} voted={voted}/>
+                </div>
+                <div style={{ flex: 2, paddingRight: '20px'}}>
+                  <h5>Bar</h5>
+                  <Bars candidates={candidates} />
+                </div>
+                <div>
+                  <h5>Doughnut</h5>
+                  <Chart candidates={candidates} />
+                </div>
+              </div>
             </div>
-            <div className="message-area">
-            <div style={{ flex: 1 }}>
-              <MintForm onMintSubmit={onMintSubmit} currentUser={currentUser} />
+          :
+            <div>
+              <div className="charts">
+                <div style={{ flex: 1 }}>
+                  <AddCandidateForm addCandidate={addCandidate} candidates={candidates} getCandidate={getCandidate} />
+                  <CandidateCard show={modal} candidate={candidate} vote={vote} close={toggleModal} />
+                </div>
+              </div>
             </div>
-            <div style={{ flex: 1 }}>
-              <TransferForm onTransferSubmit={onTransferSubmit} currentUser={currentUser} balance={balance} />
-            </div>
-          </div>
+          }
         </div>
-        : <SignIn />
+      :
+        <div>
+          <header>
+            <h1 className="logo">Nearvember community voting platform</h1>
+            <button className="signin" onClick={signIn}>Log In</button>
+          </header>
+          <SignIn />
+        </div>
       }
-      { !!currentUser }
-      {showNotification && <Notification currentUser={currentUser} amount={getBalance()} />}
+      {showNotification && <Notification />}
+      {showLoader && <Loader />}
     </main>
   );
 };
 
 App.propTypes = {
   contract: PropTypes.shape({
-    ft_balance_of: PropTypes.func.isRequired,
-    ft_mint: PropTypes.func.isRequired,
-    ft_transfer: PropTypes.func.isRequired,
-    // is_registered: PropTypes.func.isRequired,
-    storage_deposit: PropTypes.func.isRequired
+    get_question: PropTypes.func.isRequired,
+    get_candidates: PropTypes.func.isRequired,
+    add_candidate: PropTypes.func.isRequired,
+    vote: PropTypes.func.isRequired,
+    get_winner: PropTypes.func.isRequired
   }).isRequired,
   currentUser: PropTypes.shape({
     accountId: PropTypes.string.isRequired,
@@ -181,7 +234,7 @@ App.propTypes = {
   }).isRequired,
   wallet: PropTypes.shape({
     requestSignIn: PropTypes.func.isRequired,
-    signOut: PropTypes.func.isRequired
+    signOut: PropTypes.func.isRequired,
   }).isRequired
 };
 
