@@ -5,7 +5,6 @@ export default function Notification() {
     <aside>
       <p>Transaction completed.</p>
       <footer>
-        {/* <div>✔ Succeeded</div> */}
         <div>Just now</div>
       </footer>
     </aside>

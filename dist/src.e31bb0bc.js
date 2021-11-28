@@ -50025,6 +50025,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function Loader() {
   return /*#__PURE__*/_react.default.createElement("div", {
+    id: "overlay",
     style: {
       display: 'flex',
       justifyContent: 'center',
@@ -50339,19 +50340,19 @@ App.propTypes = {
 var _default = App;
 exports.default = _default;
 },{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","big.js":"../node_modules/big.js/big.js","./components/AddCandidateForm":"components/AddCandidateForm.jsx","./components/Candidates":"components/Candidates.jsx","./components/CandidateCard":"components/CandidateCard.jsx","./components/Chart":"components/Chart.jsx","./components/Bars":"components/Bars.jsx","./components/Loader":"components/Loader.jsx","./components/SignIn":"components/SignIn.jsx","./components/Notification":"components/Notification.jsx"}],"config.js":[function(require,module,exports) {
-const CONTRACT_NAME = "dev-1638066691899-74507262891954" || 'dev-1637956063244-33394579945685';
+const CONTRACT_NAME = "dev-1638066691899-74507262891954" || 'nearvotingui.testnet';
 
 function getConfig(env) {
   switch (env) {
     case 'production':
     case 'mainnet':
       return {
-        networkId: 'mainnet',
-        nodeUrl: 'https://rpc.mainnet.near.org',
+        networkId: 'testnet',
+        nodeUrl: 'https://rpc.testnet.near.org',
         contractName: CONTRACT_NAME,
-        walletUrl: 'https://wallet.near.org',
-        helperUrl: 'https://helper.mainnet.near.org',
-        explorerUrl: 'https://explorer.mainnet.near.org'
+        walletUrl: 'https://wallet.testnet.near.org',
+        helperUrl: 'https://helper.testnet.near.org',
+        explorerUrl: 'https://explorer.testnet.near.org'
       };
 
     case 'development':
@@ -66969,7 +66970,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56312" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51929" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

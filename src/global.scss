@@ -323,3 +323,14 @@ aside footer *:last-child {
 .leader {
   color: rgba(75,192,192,1);
 }
+
+#overlay {
+  width: 100px;
+  height: 100px;
+  color:rgb(66, 176, 219);
+  
+  z-index: 10;
+  position:absolute;
+  top:80%;
+  left:75%;
+}

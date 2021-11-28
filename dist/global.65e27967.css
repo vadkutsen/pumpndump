@@ -315,4 +315,14 @@ aside footer *:last-child {
   color: #4bc0c0;
 }
 
+#overlay {
+  width: 100px;
+  height: 100px;
+  color: #42b0db;
+  z-index: 10;
+  position: absolute;
+  top: 80%;
+  left: 75%;
+}
+
 /*# sourceMappingURL=/global.65e27967.css.map */
