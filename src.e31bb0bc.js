@@ -32361,13 +32361,16 @@ function PumpForm(_ref) {
     }
   }, /*#__PURE__*/_react.default.createElement("button", {
     style: {
-      backgroundColor: 'green'
+      backgroundColor: 'green',
+      height: '100%'
     },
     onClick: buy
   }, "Buy"), /*#__PURE__*/_react.default.createElement("span", {
     style: {
       width: '30%',
-      background: 'rgb(66, 65, 65)'
+      background: 'rgb(66, 65, 65)',
+      marginLeft: '10px',
+      marginRight: '10px'
     },
     className: "highlight"
   }, /*#__PURE__*/_react.default.createElement("label", {
@@ -32382,7 +32385,8 @@ function PumpForm(_ref) {
     onChange: e => fieldChanged(e.target.value)
   })), /*#__PURE__*/_react.default.createElement("button", {
     style: {
-      backgroundColor: 'red'
+      backgroundColor: 'red',
+      height: '100%'
     },
     onClick: sell
   }, "Sell"))));
@@ -38092,8 +38096,6 @@ exports.default = Bids;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
 var _reactMoment = _interopRequireDefault(require("react-moment"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -38112,22 +38114,22 @@ function Bids(_ref) {
     className: "card"
   }, /*#__PURE__*/_react.default.createElement("p", {
     style: {
-      marginLeft: '20px',
-      marginRight: '20px'
+      marginLeft: '30px',
+      marginRight: '30px',
+      display: 'flex',
+      justifyContent: 'space-between'
     }
-  }, /*#__PURE__*/_react.default.createElement("span", null, /*#__PURE__*/_react.default.createElement(_reactMoment.default, {
-    format: "HH:MM:SS"
-  }, bid[0] / 1000)), ' ', /*#__PURE__*/_react.default.createElement("span", {
+  }, /*#__PURE__*/_react.default.createElement("span", null, (bid[2] / 1000000000000000000000000000).toFixed(4)), /*#__PURE__*/_react.default.createElement("span", {
     style: bid[1] === "Buy" ? {
       color: 'green'
     } : {
       color: 'red'
     }
-  }, bid[1]), ' ', /*#__PURE__*/_react.default.createElement("span", null, (bid[2] / 1000000000000000000000000000).toFixed(4)))))) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("p", null, "No bids yet. Make your trade now!")));
-} // Candidates.propTypes = {
-//   candidates: PropTypes.array,
-// };
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-moment":"../node_modules/react-moment/dist/index.js"}],"../node_modules/chart.js/dist/chunks/helpers.segment.js":[function(require,module,exports) {
+  }, bid[1]), ' ', /*#__PURE__*/_react.default.createElement("span", null, /*#__PURE__*/_react.default.createElement(_reactMoment.default, {
+    format: "HH:MM:SS"
+  }, bid[0] / 1000)), ' ')))) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("p", null, "No bids yet. Make your trade now!")));
+}
+},{"react":"../node_modules/react/index.js","react-moment":"../node_modules/react-moment/dist/index.js"}],"../node_modules/chart.js/dist/chunks/helpers.segment.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55590,7 +55592,7 @@ function LineChart(_ref) {
 
     }]
   };
-  const data = bids.map(bid => [(0, _moment.default)(bid[0] / 1000).format('MM:ss'), (bid[2] / 1000000000000000000000000000).toFixed(4)]);
+  const data = bids.map(bid => [(0, _moment.default)(bid[0] / 1000).format('hh:mm:ss'), (bid[2] / 1000000000000000000000000000).toFixed(4)]);
   const labels = data.map(x => x[0]);
   return /*#__PURE__*/_react.default.createElement(_reactChartjs.Line, {
     options: {
@@ -55613,8 +55615,7 @@ function LineChart(_ref) {
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)'
       }]
-    } // {...props}
-
+    }
   });
 }
 },{"react":"../node_modules/react/index.js","react-chartjs-2":"../node_modules/react-chartjs-2/dist/index.modern.js","moment":"../node_modules/moment/moment.js"}],"components/Loader.jsx":[function(require,module,exports) {
@@ -55811,13 +55812,15 @@ const App = _ref => {
     style: {
       textAlign: 'center'
     }
-  }, "Pump'n'Dump simulator"), /*#__PURE__*/_react.default.createElement("p", {
+  }, "Pump'n'Dump simulator"), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
+    className: "stats"
+  }, /*#__PURE__*/_react.default.createElement("div", null, "Current Price: ", /*#__PURE__*/_react.default.createElement("span", {
+    className: "premium"
+  }, (price / 1000000000000000000000000000).toFixed(4))), /*#__PURE__*/_react.default.createElement("div", {
     style: {
       textAlign: 'center'
     }
-  }, "Pump or dump the price like a whale"), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
-    className: "stats"
-  }, /*#__PURE__*/_react.default.createElement("div", null, "Current Price: ", (price / 1000000000000000000000000000).toFixed(4)))), /*#__PURE__*/_react.default.createElement("div", {
+  }, "Trade abstract token like a whale"), /*#__PURE__*/_react.default.createElement("div", null, "Trades"))), /*#__PURE__*/_react.default.createElement("div", {
     className: "charts"
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
@@ -55829,7 +55832,7 @@ const App = _ref => {
   })), /*#__PURE__*/_react.default.createElement("div", {
     style: {
       flex: 1,
-      paddingRight: '20px'
+      paddingLeft: '20px'
     }
   }, /*#__PURE__*/_react.default.createElement(_Bids.default, {
     bids: bids
@@ -72501,7 +72504,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65075" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57512" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
