@@ -55618,7 +55618,68 @@ function LineChart(_ref) {
     }
   });
 }
-},{"react":"../node_modules/react/index.js","react-chartjs-2":"../node_modules/react-chartjs-2/dist/index.modern.js","moment":"../node_modules/moment/moment.js"}],"components/Loader.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-chartjs-2":"../node_modules/react-chartjs-2/dist/index.modern.js","moment":"../node_modules/moment/moment.js"}],"components/LoansCard.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = CandidateCard;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CandidateCard(_ref) {
+  let {
+    show,
+    close
+  } = _ref;
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, show ? /*#__PURE__*/_react.default.createElement("div", {
+    className: "modalContainer",
+    onClick: () => close()
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "modal"
+  }, /*#__PURE__*/_react.default.createElement("header", {
+    className: "modal_header"
+  }, /*#__PURE__*/_react.default.createElement("h2", {
+    className: "modal_header-title"
+  }, " Loans "), /*#__PURE__*/_react.default.createElement("button", {
+    className: "close",
+    onClick: close
+  }, "x")), /*#__PURE__*/_react.default.createElement("main", {
+    className: "modal_content"
+  }, /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement("fieldset", {
+    id: "fieldset",
+    style: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center'
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    style: {
+      width: '80%',
+      background: 'rgb(66, 65, 65)',
+      marginLeft: '10px',
+      marginRight: '10px'
+    },
+    className: "highlight"
+  }, /*#__PURE__*/_react.default.createElement("label", {
+    htmlFor: "amount"
+  }, "Amount:"), /*#__PURE__*/_react.default.createElement("input", {
+    autoComplete: "off",
+    id: "amount",
+    min: "1",
+    step: "1",
+    type: "number",
+    onChange: e => fieldChanged(e.target.value)
+  }))))), /*#__PURE__*/_react.default.createElement("footer", {
+    className: "modal_footer"
+  }, /*#__PURE__*/_react.default.createElement("button", {
+    className: "submit"
+  }, "Borrow")))) : null);
+}
+},{"react":"../node_modules/react/index.js"}],"components/Loader.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55703,6 +55764,8 @@ var _Bids = _interopRequireDefault(require("./components/Bids"));
 
 var _LineChart = _interopRequireDefault(require("./components/LineChart"));
 
+var _LoansCard = _interopRequireDefault(require("./components/LoansCard"));
+
 var _Loader = _interopRequireDefault(require("./components/Loader"));
 
 var _SignIn = _interopRequireDefault(require("./components/SignIn"));
@@ -55728,6 +55791,7 @@ const App = _ref => {
   const [balance, setBalance] = (0, _react.useState)();
   const [showNotification, setShowNotification] = (0, _react.useState)(false);
   const [showLoader, setShowLoader] = (0, _react.useState)(false);
+  const [modal, setModal] = (0, _react.useState)(false);
   (0, _react.useEffect)(() => {
     getPrice();
     getBids();
@@ -55792,6 +55856,10 @@ const App = _ref => {
     });
   };
 
+  const toggleModal = () => {
+    setModal(!modal);
+  };
+
   const signIn = () => {
     wallet.requestSignIn(nearConfig.contractName, 'Near voting');
   };
@@ -55840,6 +55908,12 @@ const App = _ref => {
     className: "charts"
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'row'
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
       flex: 1
     }
   }, /*#__PURE__*/_react.default.createElement(_PumpForm.default, {
@@ -55847,7 +55921,15 @@ const App = _ref => {
     fieldChanged: fieldChanged,
     buy: buy,
     sell: sell
-  }))))) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("header", null, /*#__PURE__*/_react.default.createElement("h1", {
+  })), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("button", {
+    style: {
+      backgroundColor: 'orange'
+    },
+    onClick: toggleModal
+  }, "Loans"), /*#__PURE__*/_react.default.createElement(_LoansCard.default, {
+    show: modal,
+    close: toggleModal
+  })))))) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("header", null, /*#__PURE__*/_react.default.createElement("h1", {
     className: "logo"
   }, "Pump'n'Dump"), /*#__PURE__*/_react.default.createElement("button", {
     className: "signin",
@@ -55873,7 +55955,7 @@ App.propTypes = {
 };
 var _default = App;
 exports.default = _default;
-},{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","./components/PumpForm":"components/PumpForm.jsx","./components/Bids":"components/Bids.jsx","./components/LineChart":"components/LineChart.jsx","./components/Loader":"components/Loader.jsx","./components/SignIn":"components/SignIn.jsx","./components/Notification":"components/Notification.jsx"}],"config.js":[function(require,module,exports) {
+},{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","./components/PumpForm":"components/PumpForm.jsx","./components/Bids":"components/Bids.jsx","./components/LineChart":"components/LineChart.jsx","./components/LoansCard":"components/LoansCard.jsx","./components/Loader":"components/Loader.jsx","./components/SignIn":"components/SignIn.jsx","./components/Notification":"components/Notification.jsx"}],"config.js":[function(require,module,exports) {
 const CONTRACT_NAME = "dev-1638289359891-27527005880920" || 'pumpndump.testnet';
 
 function getConfig(env) {
@@ -72504,7 +72586,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57997" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58360" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
