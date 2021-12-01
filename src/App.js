@@ -142,7 +142,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'row'}}>
                   <div style={{ flex: 1 }}><PumpForm balance={balance} fieldChanged={fieldChanged} buy={buy} sell={sell} /></div>
                   <div>
-                    <button style={{ backgroundColor: 'orange'}} onClick={toggleModal}>Loans</button>
+                    {/* <button style={{ backgroundColor: 'orange'}} onClick={toggleModal}>Loans</button> */}
                     <LoansCard show={modal} close={toggleModal} />
                   </div>
                 </div>

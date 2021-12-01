@@ -55921,12 +55921,7 @@ const App = _ref => {
     fieldChanged: fieldChanged,
     buy: buy,
     sell: sell
-  })), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("button", {
-    style: {
-      backgroundColor: 'orange'
-    },
-    onClick: toggleModal
-  }, "Loans"), /*#__PURE__*/_react.default.createElement(_LoansCard.default, {
+  })), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_LoansCard.default, {
     show: modal,
     close: toggleModal
   })))))) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("header", null, /*#__PURE__*/_react.default.createElement("h1", {
@@ -72586,7 +72581,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58360" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60900" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
