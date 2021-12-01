@@ -55821,17 +55821,17 @@ const App = _ref => {
     className: "charts"
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      flex: 1,
-      paddingRight: '20px'
-    }
-  }, /*#__PURE__*/_react.default.createElement(_Bids.default, {
-    bids: bids
-  })), /*#__PURE__*/_react.default.createElement("div", {
-    style: {
       flex: 2,
       paddingRight: '20px'
     }
   }, /*#__PURE__*/_react.default.createElement(_LineChart.default, {
+    bids: bids
+  })), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      flex: 1,
+      paddingRight: '20px'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_Bids.default, {
     bids: bids
   })))), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
     className: "charts"
@@ -72501,7 +72501,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64527" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64800" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
