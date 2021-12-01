@@ -20,7 +20,7 @@ export default function LineChart({ bids }) {
     ]
   }
 
-  const data = bids.map((bid) => [moment(bid[0]/1000).format('MM:ss'), (bid[2]/1000000000000000000000000000).toFixed(4)])
+  const data = bids.map((bid) => [moment(bid[0]/1000).format('hh:mm:ss'), (bid[2]/1000000000000000000000000000).toFixed(4)])
   const labels = data.map(x => x[0])
     return (
           <Line
@@ -47,7 +47,6 @@ export default function LineChart({ bids }) {
                 }
               ],
             }}
-            // {...props}
           />
     )
 }

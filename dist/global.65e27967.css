@@ -128,7 +128,6 @@ button:active {
 
 .card {
   border-radius: 20px;
-  cursor: pointer;
   color: #fff;
   background: #424141;
   flex: 1;
@@ -169,7 +168,7 @@ header {
 }
 
 .premium {
-  color: #00b7ff;
+  color: var(--secondary);
 }
 
 code {

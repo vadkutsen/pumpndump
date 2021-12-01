@@ -8,10 +8,10 @@ export default function PumpForm({ balance, buy, sell, fieldChanged }) {
     {/* <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}> */}
     <form>
       <fieldset id="fieldset" style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}} >
-          <button style={{backgroundColor: 'green'}} onClick={buy}>
+          <button style={{backgroundColor: 'green', height: '100%'}} onClick={buy}>
             Buy
           </button>
-        <span style={{width: '30%', background: 'rgb(66, 65, 65)'}} className="highlight">
+        <span style={{width: '30%', background: 'rgb(66, 65, 65)', marginLeft: '10px', marginRight: '10px'}} className="highlight">
           <label htmlFor="amount">Amount:</label>
           <input
             autoComplete="off"
@@ -23,7 +23,7 @@ export default function PumpForm({ balance, buy, sell, fieldChanged }) {
             onChange={e => fieldChanged(e.target.value)}
           />
         </span>
-        <button style={{backgroundColor: 'red'}} onClick={sell}>
+        <button style={{backgroundColor: 'red', height: '100%'}} onClick={sell}>
             Sell
           </button>
       </fieldset>

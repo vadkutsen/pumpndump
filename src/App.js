@@ -113,18 +113,19 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
             <button className="signout" onClick={signOut}>Log out</button>
           </header>
           <h1 style={{ textAlign: 'center' }}>Pump'n'Dump simulator</h1>
-          <p style={{ textAlign: 'center' }}>Pump or dump the price like a whale</p>
             <div>
               <div>
                 <div className="stats">
-                  <div>Current Price: {(price/1000000000000000000000000000).toFixed(4)}</div>
+                  <div>Current Price: <span className="premium">{(price/1000000000000000000000000000).toFixed(4)}</span></div>
+                  <div style={{ textAlign: 'center' }}>Trade abstract token like a whale</div>
+                  <div>Trades</div>
                 </div>
               </div>
               <div className="charts">
                 <div style={{ flex: 2, paddingRight: '20px'}}>
                   <LineChart bids={bids} />
                 </div>
-                <div style={{ flex: 1, paddingRight: '20px' }}>
+                <div style={{ flex: 1, paddingLeft: '20px' }}>
                   <Bids bids={bids} />
                 </div>
               </div>

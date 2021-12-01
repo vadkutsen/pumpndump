@@ -1,18 +1,17 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 
 export default function Bids({ bids }) {
   return (
     <>
-      {bids.length > 0 ?
+    {bids.length > 0 ?
       <div style={{ overflowY: 'scroll', maxHeight: '18rem' }}>
         {bids.map((bid, i) =>
           <div key={i} className="card">
-            <p style={{ marginLeft: '20px', marginRight: '20px' }}>
-              <span><Moment format="HH:MM:SS">{bid[0]/1000}</Moment></span>{' '}
-              <span style={bid[1] === "Buy" ? { color: 'green' } : { color: 'red' }}>{bid[1]}</span>{' '}
+            <p style={{ marginLeft: '30px', marginRight: '30px', display: 'flex', justifyContent: 'space-between' }}>
               <span>{(bid[2]/1000000000000000000000000000).toFixed(4)}</span>
+              <span style={bid[1] === "Buy" ? { color: 'green' } : { color: 'red' }}>{bid[1]}</span>{' '}
+              <span><Moment format="HH:MM:SS">{bid[0]/1000}</Moment></span>{' '}
             </p>
           </div>
         )}
@@ -25,7 +24,3 @@ export default function Bids({ bids }) {
     </>
   )
 }
-
-// Candidates.propTypes = {
-//   candidates: PropTypes.array,
-// };

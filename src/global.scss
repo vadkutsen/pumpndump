@@ -130,11 +130,9 @@ button {
 
 .card{
   border-radius: 20px;
-  cursor: pointer;
   color: #fff;
   background: rgb(66, 65, 65);
   flex: 1;
-  // text-align: center;
   position: relative;
   transition: all 500ms ease-in-out;
   position: relative;
@@ -161,7 +159,6 @@ header {
 .signin {
   margin-top: 10px;
   height: 60px;
-  // color: green;
 }
 
 .sender {
@@ -173,7 +170,7 @@ header {
 }
 
 .premium {
-  color: rgb(0, 183, 255);
+  color: var(--secondary);
 }
 
 code {
