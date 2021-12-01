@@ -38105,7 +38105,7 @@ function Bids(_ref) {
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, bids.length > 0 ? /*#__PURE__*/_react.default.createElement("div", {
     style: {
       overflowY: 'scroll',
-      maxHeight: '400px'
+      maxHeight: '18rem'
     }
   }, bids.map((bid, i) => /*#__PURE__*/_react.default.createElement("div", {
     key: i,
@@ -55854,11 +55854,7 @@ const App = _ref => {
 
 App.propTypes = {
   contract: _propTypes.default.shape({
-    get_price: _propTypes.default.func.isRequired // get_candidates: PropTypes.func.isRequired,
-    // add_candidate: PropTypes.func.isRequired,
-    // vote: PropTypes.func.isRequired,
-    // get_winner: PropTypes.func.isRequired
-
+    get_price: _propTypes.default.func.isRequired
   }).isRequired,
   currentUser: _propTypes.default.shape({
     accountId: _propTypes.default.string.isRequired,
@@ -55875,7 +55871,7 @@ App.propTypes = {
 var _default = App;
 exports.default = _default;
 },{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","./components/PumpForm":"components/PumpForm.jsx","./components/Bids":"components/Bids.jsx","./components/LineChart":"components/LineChart.jsx","./components/Loader":"components/Loader.jsx","./components/SignIn":"components/SignIn.jsx","./components/Notification":"components/Notification.jsx"}],"config.js":[function(require,module,exports) {
-const CONTRACT_NAME = "dev-1638289359891-27527005880920" || 'nearvotingui.testnet';
+const CONTRACT_NAME = "dev-1638289359891-27527005880920" || 'pumpndump.testnet';
 
 function getConfig(env) {
   switch (env) {
@@ -72505,7 +72501,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57305" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64527" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

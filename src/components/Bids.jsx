@@ -6,7 +6,7 @@ export default function Bids({ bids }) {
   return (
     <>
       {bids.length > 0 ?
-      <div style={{ overflowY: 'scroll', maxHeight: '400px' }}>
+      <div style={{ overflowY: 'scroll', maxHeight: '18rem' }}>
         {bids.map((bid, i) =>
           <div key={i} className="card">
             <p style={{ marginLeft: '20px', marginRight: '20px' }}>

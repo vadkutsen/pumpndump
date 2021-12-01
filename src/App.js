@@ -155,10 +155,6 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
 App.propTypes = {
   contract: PropTypes.shape({
     get_price: PropTypes.func.isRequired,
-    // get_candidates: PropTypes.func.isRequired,
-    // add_candidate: PropTypes.func.isRequired,
-    // vote: PropTypes.func.isRequired,
-    // get_winner: PropTypes.func.isRequired
   }).isRequired,
   currentUser: PropTypes.shape({
     accountId: PropTypes.string.isRequired,

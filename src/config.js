@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME ||'nearvotingui.testnet'
+const CONTRACT_NAME = process.env.CONTRACT_NAME ||'pumpndump.testnet'
 
 function getConfig(env) {
   switch (env) {
