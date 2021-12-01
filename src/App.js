@@ -121,11 +121,11 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
                 </div>
               </div>
               <div className="charts">
-                <div style={{ flex: 1, paddingRight: '20px' }}>
-                  <Bids bids={bids} />
-                </div>
                 <div style={{ flex: 2, paddingRight: '20px'}}>
                   <LineChart bids={bids} />
+                </div>
+                <div style={{ flex: 1, paddingRight: '20px' }}>
+                  <Bids bids={bids} />
                 </div>
               </div>
             </div>
