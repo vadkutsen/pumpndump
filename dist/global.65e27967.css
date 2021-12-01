@@ -11,6 +11,13 @@ html {
   --primary: #D1CCBD;
   --secondary: var(--royal);
   --tertiary: #FF585D;
+  background-image: url("/background1.99d7cf42.jpg");
+  background-position: center;
+  /* Center the image */
+  background-repeat: no-repeat;
+  /* Do not repeat the image */
+  background-size: inherit;
+  /* Resize the background image to cover the entire container */
   background-color: var(--bg);
   color: var(--fg);
   font-family: "Architects Daughter", cursive;
@@ -233,11 +240,13 @@ aside footer *:last-child {
 .charts {
   display: flex;
   justify-content: space-between;
+  padding-bottom: 20px;
 }
 
 .stats {
   display: flex;
   justify-content: space-between;
+  padding-bottom: 20px;
 }
 
 .modalContainer {
@@ -321,8 +330,8 @@ aside footer *:last-child {
   color: #42b0db;
   z-index: 10;
   position: absolute;
-  top: 80%;
-  left: 75%;
+  top: 50%;
+  left: 50%;
 }
 
 /*# sourceMappingURL=/global.65e27967.css.map */

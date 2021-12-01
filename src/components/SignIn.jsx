@@ -5,8 +5,8 @@ export default function SignIn() {
   return (
     <>
       <div style={{paddingTop: '20px'}} className="image-container">
-        <img src={banner} style={{width: '100%'}} alt="Vote" />
+        <h3>Pump'n'Dump trading simulator</h3>
       </div>
     </>
-  );
+  )
 }

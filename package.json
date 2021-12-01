@@ -35,11 +35,13 @@
   "dependencies": {
     "big.js": "^6.1.1",
     "chart.js": "^3.6.0",
+    "moment": "^2.29.1",
     "near-api-js": "~0.43.1",
     "prop-types": "^15.7.2",
     "react": "~17.0.1",
     "react-chartjs-2": "^3.0.0",
     "react-dom": "~17.0.1",
+    "react-moment": "^1.1.1",
     "regenerator-runtime": "~0.13.5"
   },
   "resolutions": {

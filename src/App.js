@@ -1,76 +1,57 @@
 import 'regenerator-runtime/runtime';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Big from 'big.js';
-import AddCandidateForm from './components/AddCandidateForm';
-import Candidates from './components/Candidates';
-import CandidateCard from './components/CandidateCard';
-import Chart from './components/Chart';
-import Bars from './components/Bars';
+import PumpForm from './components/PumpForm';
+import Bids from './components/Bids';
+import LineChart from './components/LineChart';
 import Loader from './components/Loader';
 import SignIn from './components/SignIn';
 import Notification from './components/Notification';
 
-const BOATLOAD_OF_GAS = Big(3).times(10 ** 13).toFixed();
-
 const App = ({ contract, currentUser, nearConfig, wallet }) => {
-  const [question, setQuestion] = useState()
-  const [candidates, setCandidates] = useState([])
-  const [votes, setVotes] = useState(0)
-  const [voted, setVoted] = useState()
-  const [winner, setWinner] = useState([])
-  const [candidate, setCandidate] = useState()
-  const [num, setNum] = useState(59)
+  const [price, setPrice] = useState()
+  const [amount, setAmount] = useState()
+  const [bids, setBids] = useState([])
+  const [balance, setBalance] = useState()
   const [showNotification, setShowNotification] = useState(false)
   const [showLoader, setShowLoader] = useState(false)
-  const [modal, setModal] = useState(false)
-
-  const { networkId } = nearConfig
-
-  let intervalRef = useRef();
-  const decreaseNum = () => setNum((prev) => prev - 1);
 
   useEffect(() => {
-    getQuestion()
-    getVote()
-    getCandidates()
-    getWinner()
-    setVotes(calculateVotes(candidates))
-    intervalRef.current = setInterval(decreaseNum, 1000);
-    return () => clearInterval(intervalRef.current);
-  }, [voted])
+    getPrice()
+    getBids()
+    getBalance()
+  }, [])
 
-  const getQuestion = () => {
-    contract.get_question().then(question => {setQuestion(question)})
+  const getBalance = () => {
+    setBalance(currentUser ? (currentUser.balance/1000000000000000000000000).toFixed(4) : 0)
   }
 
-  const getVote = () => {
-    if (currentUser) {
-      contract.get_vote({
-        account_id: currentUser.accountId
-      }).then(voted =>
-        voted === 'It\'s time to vote!' ? setVoted(false) : setVoted(true),
-      )
-    } else {
-      setVoted(true)
-    }
+  const fieldChanged = (value) => {
+    setAmount(value)
   }
 
-  const addCandidate = (e) => {
+  const getPrice = () => {
+    contract.get_price().then(price => {
+      setPrice(price)})
+  }
+
+  const getBids = () => {
+    contract.get_bids().then(bids => {
+      setBids(bids)
+    })
+  }
+
+  const buy = (e) => {
     e.preventDefault();
-    const { fieldset, candidate } = e.target.elements;
-    fieldset.disabled = true;
     setShowLoader(true)
-    contract.add_candidate(
-      {
-        candidate: candidate.value,
-      },
-      BOATLOAD_OF_GAS,
-    ).then((response) => {
+    contract.buy({
+            amount: amount
+          })
+    .then((response) => {
       setShowLoader(false)
-      candidate.value = ''
-      fieldset.disabled = false
-      getCandidates()
+      getPrice()
+      getBids()
+      getBalance()
       setShowNotification(true)
       setTimeout(() => {
         setShowNotification(false)
@@ -84,39 +65,17 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
     })
   }
 
-  const getCandidates = () => {
-    contract.get_candidates().then(candidates => {
-      setCandidates(candidates)
-      setVotes(calculateVotes(candidates))
-    })
-  }
-
-  const getCandidate = (candidate) => {
-      setCandidate(candidate)
-      toggleModal()
-  }
-
-  const calculateVotes = (candidates) => {
-    const voted = candidates.map(candidate => {
-      return parseInt(candidate[2])
-    })
-      const sum = voted.reduce((partial_sum, a) => partial_sum + a, 0)
-      return sum
-  }
-
-  const vote = () => {
+  const sell = (e) => {
+    e.preventDefault();
     setShowLoader(true)
-    contract.vote(
-      {
-        candidate: candidate
-      },
-      BOATLOAD_OF_GAS,
-    ).then(() => {
+    contract.sell({
+            amount: amount
+          })
+    .then((response) => {
       setShowLoader(false)
-      setVoted(true)
-      toggleModal()
-      setCandidate()
-      getCandidates()
+      getPrice()
+      getBids()
+      getBalance()
       setShowNotification(true)
       setTimeout(() => {
         setShowNotification(false)
@@ -128,16 +87,6 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
         'Check your browser console for more info.'
       )
     })
-  }
-
-  const getWinner = () => {
-    contract.get_winner().then(winner => {
-      setWinner(winner)
-    })
-  }
-
-  const toggleModal = () => {
-    setModal(!modal)
   }
 
   const signIn = () => {
@@ -157,55 +106,41 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
       {currentUser ?
         <div>
           <header>
-            <h3 className="logo">Near Voting</h3>
+            <h3 className="logo">Pump'n'Dump</h3>
             <div className="account">
               <div>Hi <span>{currentUser.accountId}!</span> Balance: <span>{(currentUser.balance/1000000000000000000000000).toFixed(4)} NEAR</span></div>
             </div>
             <button className="signout" onClick={signOut}>Log out</button>
           </header>
-          <h1 style={{ textAlign: 'center' }}>{question}</h1>
-          {voted ?
+          <h1 style={{ textAlign: 'center' }}>Pump'n'Dump simulator</h1>
+          <p style={{ textAlign: 'center' }}>Pump or dump the price like a whale</p>
             <div>
               <div>
                 <div className="stats">
-                <div>
-                  Time remaining: {num > 0 ? <span><strong>00:00:{num}</strong></span> : <span>Time's up! I'm kidding :)</span>}</div>
-                  <div> Candidates: <strong>{candidates.length}</strong></div>
-                  <div> Votes: <strong>{votes}</strong></div>
-                  <div> Leader: <strong className="leader">{winner[0]}</strong>,{' '}<strong> {winner[1]} votes</strong></div>
+                  <div>Current Price: {(price/1000000000000000000000000000).toFixed(4)}</div>
                 </div>
               </div>
               <div className="charts">
                 <div style={{ flex: 1, paddingRight: '20px' }}>
-                <h5>Leaderboard</h5>
-                <Candidates candidates={candidates} getCandidate={getCandidate} />
-                <CandidateCard show={modal} candidate={candidate} vote={vote} close={toggleModal} voted={voted}/>
+                  <Bids bids={bids} />
                 </div>
                 <div style={{ flex: 2, paddingRight: '20px'}}>
-                  <h5>Bar</h5>
-                  <Bars candidates={candidates} />
-                </div>
-                <div>
-                  <h5>Doughnut</h5>
-                  <Chart candidates={candidates} />
+                  <LineChart bids={bids} />
                 </div>
               </div>
             </div>
-          :
             <div>
               <div className="charts">
                 <div style={{ flex: 1 }}>
-                  <AddCandidateForm addCandidate={addCandidate} candidates={candidates} getCandidate={getCandidate} />
-                  <CandidateCard show={modal} candidate={candidate} vote={vote} close={toggleModal} />
+                  <PumpForm balance={balance} fieldChanged={fieldChanged} buy={buy} sell={sell} />
                 </div>
               </div>
             </div>
-          }
         </div>
       :
         <div>
           <header>
-            <h1 className="logo">Nearvember community voting platform</h1>
+            <h1 className="logo">Pump'n'Dump</h1>
             <button className="signin" onClick={signIn}>Log In</button>
           </header>
           <SignIn />
@@ -219,11 +154,11 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
 
 App.propTypes = {
   contract: PropTypes.shape({
-    get_question: PropTypes.func.isRequired,
-    get_candidates: PropTypes.func.isRequired,
-    add_candidate: PropTypes.func.isRequired,
-    vote: PropTypes.func.isRequired,
-    get_winner: PropTypes.func.isRequired
+    get_price: PropTypes.func.isRequired,
+    // get_candidates: PropTypes.func.isRequired,
+    // add_candidate: PropTypes.func.isRequired,
+    // vote: PropTypes.func.isRequired,
+    // get_winner: PropTypes.func.isRequired
   }).isRequired,
   currentUser: PropTypes.shape({
     accountId: PropTypes.string.isRequired,
