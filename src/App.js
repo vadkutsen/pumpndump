@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import PumpForm from './components/PumpForm';
 import Bids from './components/Bids';
 import LineChart from './components/LineChart';
+import LoansCard from './components/LoansCard';
 import Loader from './components/Loader';
 import SignIn from './components/SignIn';
 import Notification from './components/Notification';
@@ -15,6 +16,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
   const [balance, setBalance] = useState()
   const [showNotification, setShowNotification] = useState(false)
   const [showLoader, setShowLoader] = useState(false)
+  const [modal, setModal] = useState(false)
 
   useEffect(() => {
     getPrice()
@@ -89,6 +91,11 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
     })
   }
 
+  const toggleModal = () => {
+    setModal(!modal)
+  }
+
+
   const signIn = () => {
     wallet.requestSignIn(
       nearConfig.contractName,
@@ -132,8 +139,12 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
             </div>
             <div>
               <div className="charts">
-                <div style={{ flex: 1 }}>
-                  <PumpForm balance={balance} fieldChanged={fieldChanged} buy={buy} sell={sell} />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'row'}}>
+                  <div style={{ flex: 1 }}><PumpForm balance={balance} fieldChanged={fieldChanged} buy={buy} sell={sell} /></div>
+                  <div>
+                    <button style={{ backgroundColor: 'orange'}} onClick={toggleModal}>Loans</button>
+                    <LoansCard show={modal} close={toggleModal} />
+                  </div>
                 </div>
               </div>
             </div>

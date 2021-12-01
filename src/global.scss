@@ -8,15 +8,17 @@ html {
   --fg: #25282A;
   --gray: #888;
   --royal: #6AD1E3;
-  --blue: #0072CE;
+  --blue: #6AD1E3;
   --primary: #D1CCBD;
   --secondary: var(--royal);
   --tertiary: #FF585D;
 
-  background-image: url("./assets/background1.jpg");
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Do not repeat the image */
-  background-size:inherit; /* Resize the background image to cover the entire container */
+  background: url("./assets/background1.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
   background-color: var(--bg);
   color: var(--fg);
   font-family: 'Architects Daughter', cursive;
