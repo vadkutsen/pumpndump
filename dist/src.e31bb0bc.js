@@ -38126,8 +38126,8 @@ function Bids(_ref) {
       color: 'red'
     }
   }, bid[1]), ' ', /*#__PURE__*/_react.default.createElement("span", null, /*#__PURE__*/_react.default.createElement(_reactMoment.default, {
-    format: "HH:MM:SS"
-  }, bid[0] / 1000)), ' ')))) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("p", null, "No bids yet. Make your trade now!")));
+    format: "HH:MM:ss"
+  }, bid[0] / 1000000)), ' ')))) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("p", null, "No bids yet. Make your trade now!")));
 }
 },{"react":"../node_modules/react/index.js","react-moment":"../node_modules/react-moment/dist/index.js"}],"../node_modules/chart.js/dist/chunks/helpers.segment.js":[function(require,module,exports) {
 "use strict";
@@ -55592,7 +55592,7 @@ function LineChart(_ref) {
 
     }]
   };
-  const data = bids.map(bid => [(0, _moment.default)(bid[0] / 1000).format('hh:mm:ss'), (bid[2] / 1000000000000000000000000000).toFixed(4)]);
+  const data = bids.map(bid => [(0, _moment.default)(bid[0] / 1000000).format('HH:MM'), (bid[2] / 1000000000000000000000000000).toFixed(4)]);
   const labels = data.map(x => x[0]);
   return /*#__PURE__*/_react.default.createElement(_reactChartjs.Line, {
     options: {
@@ -72504,7 +72504,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57512" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57997" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
