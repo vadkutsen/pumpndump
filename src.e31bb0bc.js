@@ -32350,7 +32350,7 @@ function PumpForm(_ref) {
     balance,
     buy,
     sell,
-    fieldChanged
+    amountFieldChanged
   } = _ref;
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement("fieldset", {
     id: "fieldset",
@@ -32382,7 +32382,7 @@ function PumpForm(_ref) {
     min: "1",
     step: "1",
     type: "number",
-    onChange: e => fieldChanged(e.target.value)
+    onChange: e => amountFieldChanged(e.target.value)
   })), /*#__PURE__*/_react.default.createElement("button", {
     style: {
       backgroundColor: 'red',
@@ -55624,20 +55624,24 @@ function LineChart(_ref) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = CandidateCard;
+exports.default = LoansCard;
 
 var _react = _interopRequireDefault(require("react"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function CandidateCard(_ref) {
+function LoansCard(_ref) {
   let {
     show,
-    close
+    close,
+    borrow,
+    payoff,
+    loansAmountFieldChanged,
+    debt
   } = _ref;
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, show ? /*#__PURE__*/_react.default.createElement("div", {
-    className: "modalContainer",
-    onClick: () => close()
+    className: "modalContainer" // onClick={() => close()}
+
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "modal"
   }, /*#__PURE__*/_react.default.createElement("header", {
@@ -55649,7 +55653,7 @@ function CandidateCard(_ref) {
     onClick: close
   }, "x")), /*#__PURE__*/_react.default.createElement("main", {
     className: "modal_content"
-  }, /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement("fieldset", {
+  }, /*#__PURE__*/_react.default.createElement("p", null, "Your debt: ", debt), /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement("fieldset", {
     id: "fieldset",
     style: {
       display: 'flex',
@@ -55665,19 +55669,23 @@ function CandidateCard(_ref) {
     },
     className: "highlight"
   }, /*#__PURE__*/_react.default.createElement("label", {
-    htmlFor: "amount"
+    htmlFor: "loansAmount"
   }, "Amount:"), /*#__PURE__*/_react.default.createElement("input", {
     autoComplete: "off",
-    id: "amount",
+    id: "loansAmount",
     min: "1",
     step: "1",
     type: "number",
-    onChange: e => fieldChanged(e.target.value)
+    onChange: e => loansAmountFieldChanged(e.target.value)
   }))))), /*#__PURE__*/_react.default.createElement("footer", {
     className: "modal_footer"
   }, /*#__PURE__*/_react.default.createElement("button", {
-    className: "submit"
-  }, "Borrow")))) : null);
+    className: "submit",
+    onClick: borrow
+  }, "Borrow"), /*#__PURE__*/_react.default.createElement("button", {
+    className: "submit",
+    onClick: payoff
+  }, "Pay Off")))) : null);
 }
 },{"react":"../node_modules/react/index.js"}],"components/Loader.jsx":[function(require,module,exports) {
 "use strict";
@@ -55785,25 +55793,38 @@ const App = _ref => {
     nearConfig,
     wallet
   } = _ref;
-  const [price, setPrice] = (0, _react.useState)();
-  const [amount, setAmount] = (0, _react.useState)();
+  const [price, setPrice] = (0, _react.useState)(0);
+  const [amount, setAmount] = (0, _react.useState)(0);
+  const [loansAmount, setLoansAmount] = (0, _react.useState)(0);
   const [bids, setBids] = (0, _react.useState)([]);
   const [balance, setBalance] = (0, _react.useState)();
   const [showNotification, setShowNotification] = (0, _react.useState)(false);
   const [showLoader, setShowLoader] = (0, _react.useState)(false);
   const [modal, setModal] = (0, _react.useState)(false);
+  const [debt, setDebt] = (0, _react.useState)(0);
   (0, _react.useEffect)(() => {
     getPrice();
-    getBids();
+    getBids(); // getDebt()
+
     getBalance();
   }, []);
 
   const getBalance = () => {
     setBalance(currentUser ? (currentUser.balance / 1000000000000000000000000).toFixed(4) : 0);
+  }; // const getDebt = () => {
+  //   contract.get_debt({
+  //     account_id: currentUser.accountId
+  //   }).then(debt => {
+  //     setPrice(debt)})
+  // }
+
+
+  const amountFieldChanged = value => {
+    setAmount(value);
   };
 
-  const fieldChanged = value => {
-    setAmount(value);
+  const loansAmountFieldChanged = value => {
+    setLoansAmount(value);
   };
 
   const getPrice = () => {
@@ -55820,45 +55841,114 @@ const App = _ref => {
 
   const buy = e => {
     e.preventDefault();
-    setShowLoader(true);
-    contract.buy({
-      amount: amount
-    }).then(response => {
-      setShowLoader(false);
-      getPrice();
-      getBids();
-      getBalance();
-      setShowNotification(true);
-      setTimeout(() => {
-        setShowNotification(false);
-      }, 11000);
-    }).catch(e => {
-      alert('Something went wrong! ' + 'Maybe you need to sign out and back in? ' + 'Check your browser console for more info.');
-    });
+
+    if (amount && amount > 0) {
+      setShowLoader(true);
+      contract.buy({
+        amount: amount
+      }).then(response => {
+        setShowLoader(false);
+        getPrice();
+        getBids();
+        getBalance();
+        setShowNotification(true);
+        setTimeout(() => {
+          setShowNotification(false);
+        }, 5000);
+      }).catch(e => {
+        alert('Not enough liquidity! ' + 'Please try again later.');
+        setShowLoader(false);
+      });
+    } else {
+      alert('Please enter amount!');
+    }
   };
 
   const sell = e => {
     e.preventDefault();
-    setShowLoader(true);
-    contract.sell({
-      amount: amount
-    }).then(response => {
-      setShowLoader(false);
-      getPrice();
-      getBids();
-      getBalance();
-      setShowNotification(true);
-      setTimeout(() => {
-        setShowNotification(false);
-      }, 11000);
-    }).catch(e => {
-      alert('Something went wrong! ' + 'Maybe you need to sign out and back in? ' + 'Check your browser console for more info.');
-    });
+
+    if (amount && amount > 0) {
+      setShowLoader(true);
+      contract.sell({
+        amount: amount
+      }).then(response => {
+        setShowLoader(false);
+        getPrice();
+        getBids();
+        getBalance();
+        setShowNotification(true);
+        setTimeout(() => {
+          setShowNotification(false);
+        }, 5000);
+      }).catch(e => {
+        alert('Not enough liquidity! ' + 'Please try again later.');
+        setShowLoader(false);
+      });
+    } else {
+      alert('Please enter amount!');
+    }
   };
 
   const toggleModal = () => {
     setModal(!modal);
-  };
+  }; // const borrow = (e) => {
+  //   e.preventDefault();
+  //   if (loansAmount && loansAmount > 0) {
+  //     setShowLoader(true)
+  //     contract.lender_borrow({
+  //       account_id: currentUser.accountId,
+  //       amount: loansAmount
+  //     })
+  //     .then((response) => {
+  //       setShowLoader(false)
+  //       toggleModal()
+  //       getBalance()
+  //       getDebt()
+  //       setShowNotification(true)
+  //       setTimeout(() => {
+  //         setShowNotification(false)
+  //       }, 5000)
+  //     }).catch((e) => {
+  //       alert(
+  //         e
+  //         // 'Not enough liquidity! ' +
+  //         // 'Please try again later.'
+  //       )
+  //       setShowLoader(false)
+  //     })
+  //   } else {
+  //     alert('Please enter amount!')
+  //   }
+  // }
+  // const payoff = (e) => {
+  //   e.preventDefault();
+  //   if (loansAmount && loansAmount > 0) {
+  //     setShowLoader(true)
+  //     // contract.lender_payoff({
+  //     //   amount: loansAmount,
+  //     //   account_id: currentUser.account_id
+  //     // })
+  //     // .then((response) => {
+  //       setShowLoader(false)
+  //       // toggleModal()
+  //       getBalance()
+  //       getDebt()
+  //       setShowNotification(true)
+  //       setTimeout(() => {
+  //         setShowNotification(false)
+  //       }, 5000)
+  //     // }).catch((e) => {
+  //     //   alert(
+  //     //     'Not enough liquidity! ' +
+  //     //     'Please try again later.'
+  //     //   )
+  //     //   setShowLoader(false)
+  //     // })
+  //   } else {
+  //     alert('Please enter amount!')
+  //   }
+  // }
+
 
   const signIn = () => {
     wallet.requestSignIn(nearConfig.contractName, 'Near voting');
@@ -55918,12 +56008,9 @@ const App = _ref => {
     }
   }, /*#__PURE__*/_react.default.createElement(_PumpForm.default, {
     balance: balance,
-    fieldChanged: fieldChanged,
+    amountFieldChanged: amountFieldChanged,
     buy: buy,
     sell: sell
-  })), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_LoansCard.default, {
-    show: modal,
-    close: toggleModal
   })))))) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("header", null, /*#__PURE__*/_react.default.createElement("h1", {
     className: "logo"
   }, "Pump'n'Dump"), /*#__PURE__*/_react.default.createElement("button", {
@@ -72523,9 +72610,9 @@ async function initContract() {
   // accounts can only have one contract deployed to them.
   nearConfig.contractName, {
     // View methods are read-only – they don't modify the state, but usually return some value
-    viewMethods: ['get_price', 'get_bids'],
+    viewMethods: ['get_price', 'get_bids', 'get_debt'],
     // Change methods can modify the state, but you don't receive the returned value when called
-    changeMethods: ['buy', 'sell'],
+    changeMethods: ['buy', 'sell', 'lender_borrow', 'lender_payoff'],
     // Sender is the account ID to initialize transactions.
     // getAccountId() will return empty string if user is still unauthorized
     sender: walletConnection.getAccountId()
@@ -72581,7 +72668,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60900" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64560" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
